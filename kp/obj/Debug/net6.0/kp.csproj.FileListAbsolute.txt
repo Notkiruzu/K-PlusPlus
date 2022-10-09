@@ -1,0 +1,15 @@
+D:\K++\K-PlusPlus\kp\obj\Debug\net6.0\kp.csproj.AssemblyReference.cache
+D:\K++\K-PlusPlus\kp\obj\Debug\net6.0\kp.GeneratedMSBuildEditorConfig.editorconfig
+D:\K++\K-PlusPlus\kp\obj\Debug\net6.0\kp.AssemblyInfoInputs.cache
+D:\K++\K-PlusPlus\kp\obj\Debug\net6.0\kp.AssemblyInfo.cs
+D:\K++\K-PlusPlus\kp\obj\Debug\net6.0\kp.csproj.CoreCompileInputs.cache
+D:\K++\K-PlusPlus\kp\bin\Debug\net6.0\kp.exe
+D:\K++\K-PlusPlus\kp\bin\Debug\net6.0\kp.deps.json
+D:\K++\K-PlusPlus\kp\bin\Debug\net6.0\kp.runtimeconfig.json
+D:\K++\K-PlusPlus\kp\bin\Debug\net6.0\kp.dll
+D:\K++\K-PlusPlus\kp\bin\Debug\net6.0\kp.pdb
+D:\K++\K-PlusPlus\kp\obj\Debug\net6.0\kp.dll
+D:\K++\K-PlusPlus\kp\obj\Debug\net6.0\refint\kp.dll
+D:\K++\K-PlusPlus\kp\obj\Debug\net6.0\kp.pdb
+D:\K++\K-PlusPlus\kp\obj\Debug\net6.0\kp.genruntimeconfig.cache
+D:\K++\K-PlusPlus\kp\obj\Debug\net6.0\ref\kp.dll
