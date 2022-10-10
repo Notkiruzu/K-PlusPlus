@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace kp
 {
@@ -211,9 +212,29 @@ namespace kp
 
         private SyntaxToken Current => Peek(0);
 
+        private SyntaxToken NextToken()
+        {
+            var current = Current;
+            _position++;
+            return current;
+        }
+
         public ExpressionSyntax Prase()
         {
+            var left = ParsePrimaryExpression();
 
+            while (Current.Kind == SyntaxKind.PlusToken ||
+                Current.Kind == SyntaxKind.MinusToken)
+            {
+                var operatorToken = NextToken();
+                var right = ParsePrimaryExpression();
+                primary = new BinaryExpressionSyntax(left, operatorToken, right)
+            }
+
+            private object ParsePrimaryExpression()
+            {
+                 
+            }
         }
     }
 }
