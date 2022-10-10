@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.ComponentModel;
+using System.Data.Common;
 using System.Runtime.CompilerServices;
 
 namespace kp
@@ -14,20 +16,35 @@ namespace kp
                 if(string.IsNullOrWhiteSpace(line))
                     return;
 
-                var lexer = new Lexer(line);
-                while (true)
-                {
-                    var token = lexer.NextToken();
-                    if (token.Kind == SyntaxKind.EndOfFileToken)
-                        break;
-                    Console.WriteLine($"{token.Kind}: '{token.Text}'");
+                var parser = new Parser(line);
+                var expression = parser.Prase();
 
-                    if (token.Value != null)
-                        Console.Write($"{token.Value}");
 
-                    Console.WriteLine();
-                }  
+                var color  = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+
+                    PrettyPrint(expression);
+
+                Console.ForegroundColor = color;
             }
+        }
+
+        static void PrettyPrint(SyntaxNode node, string indent = "")
+        {
+            Console.Write(node.Kind);
+
+                if(node is SyntaxToken t && t.Value != null)
+            {
+                Console.Write(" ");
+                Console.Write(t.Value);
+            }
+
+                Console.WriteLine();
+
+                Indent += "    ";
+
+            foreach (var child in node.GetChildern())
+                PrettyPrint(child, indent);
         }
     }
     enum SyntaxKind
@@ -54,10 +71,15 @@ namespace kp
             Value = value;
         }
 
-        public SyntaxKind Kind { get; }
+        public override SyntaxKind Kind { get; }
         public int Position { get; }
         public string Text { get; }
         public object Value { get; } 
+
+        public override IEnumerable<SyntaxNode> GetChildren()
+        {
+            return Enumerable.Empty<SyntaxNode>();
+        }
     }
 
     class Lexer
@@ -139,9 +161,11 @@ namespace kp
         }
     }
 
-    class SyntaxNode
+  abstract class SyntaxNode
     {
         public abstract SyntaxKind kind { get; }
+
+        public IEnumerable<SyntaxNode> GetChildern();
     }
 
    abstract class ExpressionSyntax : SyntaxNode
@@ -153,25 +177,37 @@ namespace kp
     {
         public NumberExpressionSyntax(SyntaxToken numberToken)
         {
-
+            NumberToken = numberToken;
         }
 
         public override SyntaxKind kind => SyntaxKind.NumberExpression;
         public SyntaxToken NumberToken { get; }
+
+        public override IEnumerable<SyntaxNode> GetChildern()
+        {
+            yield return NumberToken;
+        }
     }
 
     sealed class BinaryExpressionSyntax : ExpressionSyntax
     {
-        public BinaryExpressionSyntax(ExpressionSyntax left, SyntaxNode operatorToken, ExpressionSyntax rigth)
+        public BinaryExpressionSyntax(ExpressionSyntax left,SyntaxToken operatorToken, ExpressionSyntax rigth) 
         {
-            Left = left
-            OperatorToken = operatorToken
-            Right = rigth;
+            Left = left;
+            OperatorToken = operatorToken;
+            Right = rigth; 
         }
         public override SyntaxKind Kind => SyntaxKind.BinaryExpressions;
         public ExpressionSyntax Left { get; }
-        public SyntaxNode OperatorToken { get; }
+        public SyntaxToken OperatorToken { get; }
         public ExpressionSyntax Right { get; }
+
+        public override IEnumerable<SyntaxNode> GetChildren()
+        {
+            yield return Left;
+            yield return OperatorToken;
+            yield return Right;
+        }
 
         
     }
@@ -219,6 +255,14 @@ namespace kp
             return current;
         }
 
+            private SyntaxToken Match(SyntaxKind kind)
+        {
+            if (Current.Kind == kind)
+                return NextToken();
+
+            return new SyntaxToken(kind, Current.Position, null, null);
+        }
+
         public ExpressionSyntax Prase()
         {
             var left = ParsePrimaryExpression();
@@ -228,13 +272,16 @@ namespace kp
             {
                 var operatorToken = NextToken();
                 var right = ParsePrimaryExpression();
-                primary = new BinaryExpressionSyntax(left, operatorToken, right)
+                primary = new BinaryExpressionSyntax(left, operatorToken, right);
             }
 
-            private object ParsePrimaryExpression()
-            {
-                 
-            }
+            return left;
+        }
+
+        private ExpressionSyntax ParsePrimaryExpression()
+        {
+            var numberToken = Match(SyntaxKind.NumberToken);
+            return new NumberExpressionSyntax(numberToken);
         }
     }
 }
